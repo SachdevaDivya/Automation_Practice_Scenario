@@ -39,9 +39,10 @@ public class Practice {
 		 WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 			
 			//Verify Laptops & Notebooks page is open with title text verification
-			//String AT= driver.getTitle();
+			String AT= driver.getTitle();
 			//String ET="Laptops & Notebooks";
-			//Assert.assertEquals(driver.getTitle(),"Your Store");
+		 assert driver.getTitle().equals("Laptops") : "Title mismatch!";
+
 			
 			
 		 WebElement dropdown = wait.until(ExpectedConditions.elementToBeClickable(By.id("input-sort")));
