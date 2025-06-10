@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 //import org.testng.Assert;
 import org.openqa.selenium.WebElement;
 
+
 public class Practice {
 
 	public static void main(String[] args) throws InterruptedException {
@@ -19,6 +20,7 @@ public class Practice {
 		System.setProperty("webdriver.chrome.driver","/Users/divyasachdeva/Documents/chromedriver-mac-arm64/chromedriver");
 		WebDriver driver = new ChromeDriver();
 		//Go to https://naveenautomationlabs.com/opencart
+		try {
 		driver.get(" https://naveenautomationlabs.com/opencart");
 		System.out.println(driver.getTitle());
 		driver.manage().window().maximize();
@@ -33,65 +35,52 @@ public class Practice {
 		 WebElement select=driver.findElement(By.linkText("Show All Laptops & Notebooks"));
 		 //select.click();
 		 action.moveToElement(select).click().perform();
-		 
-		
-		 
-		
-			System.out.println(driver.getTitle());
-			Thread.sleep(3000);
+		 System.out.println(driver.getTitle());
+		 WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 			
 			//Verify Laptops & Notebooks page is open with title text verification
 			//String AT= driver.getTitle();
 			//String ET="Laptops & Notebooks";
-			
 			//Assert.assertEquals(driver.getTitle(),"Your Store");
-			WebElement dropdown= driver.findElement(By.id("input-sort"));
 			
-			Select dropd = new Select(dropdown);
-			dropd.selectByVisibleText("Model (A - Z)");
-			Thread.sleep(3000);
 			
-			WebElement first= driver.findElement(By.xpath(" //a[normalize-space()='MacBook']"));
-			first.click();
-			Thread.sleep(3000);
+		 WebElement dropdown = wait.until(ExpectedConditions.elementToBeClickable(By.id("input-sort")));
+		 Select dropd = new Select(dropdown);
+		 dropd.selectByVisibleText("Model (A - Z)");
+		 WebElement first = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[normalize-space()='MacBook']")));
+		first.click();
+		
 			
-			 WebElement description = driver.findElement(By.id("tab-description"));
-		     System.out.println("Description: \n" + description.getText());
-		     Thread.sleep(3000);
+		WebElement description = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("tab-description")));
+		System.out.println("Description: \n" + description.getText());
+		try {
+            WebElement specs = driver.findElement(By.xpath("//li[@class='active']"));
+            Actions actions = new Actions(driver);
+            actions.moveToElement(specs).click().perform();
+            Thread.sleep(1000);  // Small wait, since this is a secondary action
+            WebElement specification = driver.findElement(By.id("tab-specification"));
+            
+            // Wait explicitly for the specifications section
+            WebDriverWait waitForSpecs = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebElement specContent = waitForSpecs.until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("tab-specification"))
+            );
+            System.out.println("Specification: \n" + specification.getText());
+        } catch (Exception e) {
+            System.out.println("No specification tab found: " + e.getMessage());
+        }
 		     
-		    // try {
-			
-			/*WebElement specs=driver.findElement(By.xpath("//li[@class='active']"));
-			Actions actions = new Actions(driver);
-			actions.moveToElement(specs).click().perform();
-			Thread.sleep(1000);
-			specs.click();
-			WebElement specification = driver.findElement(By.id("tab-specification"));
-			
-			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-			WebElement specContent = wait.until(
-			    ExpectedConditions.visibilityOfElementLocated(By.id("tab-specification"))
-			);
-
-	        System.out.println("Specification: \n" + specification.getText());
-			Thread.sleep(3000);
-		     
-		     //catch (Exception e) {
-		            //e.printStackTrace();}*/
-			WebElement addToCartButton = driver.findElement(By.id("button-cart"));
+		WebElement addToCartButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("button-cart")));
 			addToCartButton.click();
 			WebElement successMsg = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".alert-success")));
 			System.out.println("Success message: " + successMsg.getText());
 
-		     
-		     
-		    
-			
-			
-		 
-		 driver.quit();
-		
+	} catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        // Quit the driver
+        driver.quit();
+    }}}
+	
 
-	}
 
-}
